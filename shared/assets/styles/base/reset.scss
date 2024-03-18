@@ -1,0 +1,43 @@
+@import './fonts';
+
+* {
+  box-sizing: border-box;
+  font-family: 'Rostelecom Basis', sans-serif;
+}
+
+html {
+  font-size: 1rem;
+  scroll-behavior: smooth !important;
+}
+
+body {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #000000;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+}
+
+button {
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  list-style-type: none;
+}
