@@ -1,12 +1,11 @@
 'use client';
 
-import { useUnit } from 'effector-react';
-import { motion } from 'framer-motion';
+import dynamic from 'next/dynamic';
 
-import { usersQuery } from '@/entities/user/api/userApi';
+const HomePage = dynamic(() => import('@/src/pages/Home'), {
+  ssr: false,
+});
 
-export default function Home() {
-  const { data } = useUnit(usersQuery);
-  console.info(data);
-  return <motion.main>123</motion.main>;
+export default function Page() {
+  return <HomePage />;
 }

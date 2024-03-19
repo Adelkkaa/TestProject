@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react';
 import type { FC } from 'react';
 
-import type { ITableItem } from '@/shared';
+import type { ITableItem } from '@/src/shared';
 
 type ITableComponentProps = {
   columns: ITableItem[];

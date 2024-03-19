@@ -3,7 +3,7 @@ import { Box, Flex, IconButton, useColorMode } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { FaMoon, FaSun } from 'react-icons/fa';
 
-import { MotionText, initialAnimation } from '@/shared';
+import { MotionText, initialAnimation } from '@/src/shared';
 
 export const Header = () => {
   const { toggleColorMode, colorMode } = useColorMode();

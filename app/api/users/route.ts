@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
-import { clientPromise } from '@/shared/lib/clientPromise';
-import { getDbAndReqBody } from '@/shared/utils/api/dbConnection';
+import { clientPromise } from '@/src/shared/lib/clientPromise';
+import { getDbAndReqBody } from '@/src/shared/utils/api/dbConnection';
 
 export async function GET() {
   try {
