@@ -11,6 +11,35 @@ export async function GET() {
 
     return NextResponse.json({ result: data, error: null });
   } catch (error) {
-    return NextResponse.json({ result: null, error: error });
+    return new Response(
+      JSON.stringify({ result: null, error: (error as Error).message }),
+      {
+        status: 500,
+      }
+    );
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const { db } = await getDbAndReqBody(clientPromise, request);
+
+    console.info(db);
+    // Получение тела запроса
+    const body = await request.json();
+
+    // Добавление нового пользователя в коллекцию
+    const result = await db.collection('users').insertOne(body);
+
+    return NextResponse.json({ result: result, error: null });
+  } catch (error) {
+    console.info('ErrorHuerror', typeof error);
+
+    return new Response(
+      JSON.stringify({ result: null, error: (error as Error).message }),
+      {
+        status: 500,
+      }
+    );
   }
 }

@@ -1,4 +1,5 @@
 import { Box, Spinner } from '@chakra-ui/react';
+import { motion } from 'framer-motion';
 
 export const CenteredSpinner = () => (
   <Box
@@ -10,3 +11,5 @@ export const CenteredSpinner = () => (
     <Spinner />
   </Box>
 );
+
+export const MotionSpinner = motion(CenteredSpinner);

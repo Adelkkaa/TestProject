@@ -1,14 +1,10 @@
-export type ITableItem = {
-  title: string;
-  id: string;
-};
-
 export type IReturn<T> = {
   result: T | null;
   error: string | null;
 };
 
 export type IUser = {
+  _id: string;
   firstName: string;
   lastName: string;
   middleName: string;
@@ -17,3 +13,5 @@ export type IUser = {
   phone: string;
   gender: string;
 };
+
+export type IUserWithoutId = Omit<IUser, '_id'>;

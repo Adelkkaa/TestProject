@@ -23,6 +23,7 @@ export const Header = () => {
         alignItems={'center'}
         pt={5}
         pb={3}
+        mb={10}
       >
         <Flex gap={12} alignItems={'center'}>
           <IconButton
