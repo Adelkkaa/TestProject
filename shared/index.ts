@@ -1,2 +1,5 @@
+export { initialAnimation } from './animations';
+
 export type { ITableItem } from './types';
-export { MotionText, TableComponent } from './ui';
+
+export { MotionBox, MotionContainer, MotionText, TableComponent } from './ui';

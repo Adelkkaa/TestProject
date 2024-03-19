@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 
 import '@/shared/assets/styles/styles.scss';
-import { Providers } from './providers';
+import { Providers } from './layouts/TransitionLayout';
 
 export const metadata: Metadata = {
   title: 'App',
