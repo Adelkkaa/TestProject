@@ -131,7 +131,7 @@ export const UserTable = () => {
               </Table>
             </TableContainer>
             <Modal
-              isOpen={isOpen}
+              isOpen={isOpen && !selectedUserId}
               onClose={onClose}
               title="Создание нового пользователя"
               actionTitle="Сохранить"

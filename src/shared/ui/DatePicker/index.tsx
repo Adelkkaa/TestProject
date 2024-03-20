@@ -1,10 +1,6 @@
-import type { InputProps } from '@chakra-ui/react';
-import {
-  Input as BaseInput,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-} from '@chakra-ui/react';
+import { FormControl, FormErrorMessage, FormLabel } from '@chakra-ui/react';
+import type { ReactDatePickerProps } from 'react-datepicker';
+import ReactDatePicker from 'react-datepicker';
 import type { FieldPath, FieldValues } from 'react-hook-form';
 import { useController } from 'react-hook-form';
 
@@ -14,38 +10,36 @@ type TInputField<
 > = {
   name: TName;
   label: string;
-} & InputProps;
+} & Omit<ReactDatePickerProps, 'onChange'>;
 
-export const InputField = <
+export const DatePicker = <
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >({
   name,
-  placeholder,
   label,
   ...props
 }: TInputField<TFieldValues, TName>) => {
   const {
-    field,
+    field: { value, onChange, ...field },
     fieldState: { error },
   } = useController({
     name,
   });
 
   return (
-    <FormControl isInvalid={!!error}>
+    <FormControl width="100%" isInvalid={!!error}>
       <FormLabel htmlFor={name}>{label}</FormLabel>
-      <BaseInput
-        id={name}
-        placeholder={placeholder}
+      <ReactDatePicker
         {...field}
         {...props}
-        isInvalid={!!error}
-        errorBorderColor="red.500"
-        _focus={{
-          borderColor: 'blue.500',
-          boxShadow: 'outline',
-        }}
+        name={name}
+        value={value}
+        selected={value}
+        onChange={(date) => onChange(date)}
+        dateFormat="dd.MM.yyyy"
+        className={`custom-datepicker ${error ? 'custom-datepicker__error' : ''}`}
+        wrapperClassName="custom-datepicker__wrapper"
       />
       {error && <FormErrorMessage>{error.message}</FormErrorMessage>}
     </FormControl>
