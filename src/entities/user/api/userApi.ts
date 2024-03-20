@@ -13,3 +13,9 @@ export const addNewUser = async (data: IUserWithoutId) => {
 
   return res.data;
 };
+
+export const deleteUser = async (id: string) => {
+  const res = await baseApi.delete(`/users/${id}`);
+
+  return res.data;
+};

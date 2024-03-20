@@ -2,20 +2,28 @@
 
 import {
   Button,
+  Flex,
+  IconButton,
   Table,
   TableContainer,
   Tbody,
   Th,
   Thead,
   Tr,
+  useDisclosure,
 } from '@chakra-ui/react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
+import { enqueueSnackbar } from 'notistack';
+import { useState } from 'react';
+import { FaEdit } from 'react-icons/fa';
 
-import { addNewUser, getUsers } from '@/src/entities/user/api/userApi';
+import { Modal } from '@/src/entities/modal';
+import { deleteUser, getUsers } from '@/src/entities/user/api/userApi';
+import { AddUserForm } from '@/src/features/add-user-form';
+import { EditUserForm } from '@/src/features/edit-user-form';
 import type { IReturn, IUser } from '@/src/shared';
 import { MotionBox, MotionSpinner, initialAnimation } from '@/src/shared';
-import type { IUserWithoutId } from '@/src/shared/types';
 
 const columns = [
   'Имя',
@@ -25,52 +33,42 @@ const columns = [
   'Дата рождения',
   'Номер телефона',
   'Пол',
+  '',
 ];
 
 export const UserTable = () => {
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const { onOpen, isOpen, onClose } = useDisclosure();
+
+  const queryClient = useQueryClient();
+
   const { data: users, isLoading } = useQuery<IReturn<IUser[]>>({
     queryKey: ['users'],
     queryFn: getUsers,
   });
 
-  const mutation = useMutation({
-    mutationFn: (data: IUserWithoutId) => addNewUser(data),
+  const deleteOneUser = useMutation({
+    mutationFn: (id: string) => deleteUser(id),
+    onError: (e) => {
+      enqueueSnackbar(e.message || 'Ошибка запроса', {
+        preventDuplicate: false,
+        variant: 'error',
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+    },
   });
 
-  const handleSubmit = () => {
-    mutation.mutate({
-      firstName: '123',
-      lastName: '123',
-      middleName: '123',
-      fullName: '123',
-      birth: '123',
-      phone: '123',
-      gender: '123',
-    });
+  const handleOnCloseModal = () => {
+    setSelectedUserId(null);
+    onClose();
   };
-  //   useEffect(() => {
-  //     const fetcher = async (data: IUserWithoutId) => {
-  //       try {
-  //         const res = await baseApi.post('/users', data, {
-  //           headers: { 'Content-Type': 'application/json;charset=utf-8' },
-  //         });
 
-  //         return res.data;
-  //       } catch (e) {
-  //         console.info(e);
-  //       }
-  //     };
-  //     fetcher({
-  //       firstName: '123',
-  //       lastName: '123',
-  //       middleName: '123',
-  //       fullName: '123',
-  //       birth: '123',
-  //       phone: '123',
-  //       gender: '123',
-  //     });
-  //   }, []);
-
+  const handleOnOpenModal = (id: string) => {
+    setSelectedUserId(id);
+    onOpen();
+  };
   return (
     <>
       {isLoading ? (
@@ -86,6 +84,19 @@ export const UserTable = () => {
             animate="animate"
             variants={initialAnimation}
           >
+            <Flex width={'100%'} justifyContent={'flex-end'} mb={3}>
+              <Button
+                _hover={{
+                  borderBottom: '2px solid',
+                  borderBottomRadius: '0%',
+                  borderColor: 'blue.500',
+                }}
+                variant={'text'}
+                onClick={onOpen}
+              >
+                Создать нового пользователя
+              </Button>
+            </Flex>
             <TableContainer>
               <Table variant="simple">
                 <Thead>
@@ -104,13 +115,41 @@ export const UserTable = () => {
                       <Th>{item.fullName}</Th>
                       <Th>{dayjs(item.birth).format('DD.MM.YYYY')}</Th>
                       <Th>{item.phone}</Th>
-                      <Th>{item.gender}</Th>
+                      <Th onClick={() => deleteOneUser.mutate(item._id)}>
+                        {item.gender}
+                      </Th>
+                      <Th>
+                        <IconButton
+                          onClick={() => handleOnOpenModal(item._id)}
+                          aria-label="Cоздать нового пользователя"
+                          icon={<FaEdit />}
+                        />
+                      </Th>
                     </Tr>
                   ))}
                 </Tbody>
               </Table>
             </TableContainer>
-            <Button onClick={handleSubmit}>Нажми сюда</Button>
+            <Modal
+              isOpen={isOpen}
+              onClose={onClose}
+              title="Создание нового пользователя"
+              actionTitle="Сохранить"
+              actionType="submit"
+              formId="addUserForm"
+            >
+              <AddUserForm formId={'addUserForm'} />
+            </Modal>
+            <Modal
+              isOpen={!!selectedUserId}
+              onClose={handleOnCloseModal}
+              title="Изменение информации о пользователе"
+              actionTitle="Сохранить"
+              actionType="submit"
+              formId={selectedUserId}
+            >
+              {selectedUserId && <EditUserForm id={selectedUserId} />}
+            </Modal>
           </MotionBox>
         )
       )}

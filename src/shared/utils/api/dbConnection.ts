@@ -1,8 +1,9 @@
 import type { MongoClient } from 'mongodb';
+import type { NextRequest } from 'next/server';
 
 export const getDbAndReqBody = async (
   clientPromise: Promise<MongoClient>,
-  req: Request | null
+  req: NextRequest | null
 ) => {
   const db = (await clientPromise).db(process.env.NEXT_PUBLIC_DB_NAME);
 
