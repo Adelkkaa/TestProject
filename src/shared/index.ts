@@ -8,6 +8,8 @@ export {
   MotionContainer,
   MotionSpinner,
   MotionText,
+  PhoneInput,
+  Select,
   Spinner,
 } from './ui';
 

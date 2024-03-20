@@ -14,14 +14,17 @@ export const AddUsersSchema = z.object({
   birth: z
     .date({ required_error: 'Введите дату рождения' })
     .nullable()
-    .refine((arg) => arg, { message: 'Введите дату рождения' })
+    .refine(
+      (arg) => arg && dayjs(arg) > dayjs('1930-01-01') && dayjs(arg) <= dayjs(),
+      { message: 'Введите корректную дату рождения' }
+    )
     .transform((date) => dayjs(date).format('YYYY-MM-DD')),
-  // phone: z
-  //   .string({ required_error: 'Введите имя пользователя' })
-  //   .min(1, 'Необходимо имя пользователя'),
-  // gender: z
-  //   .string({ required_error: 'Введите имя пользователя' })
-  //   .min(1, 'Необходимо имя пользователя'),
+  phone: z
+    .string({ required_error: 'Введите номер телефона пользователя' })
+    .min(15, 'Необходимо ввести номер телефона пользователя'),
+  gender: z
+    .string({ required_error: 'Выберите пол пользователя' })
+    .min(1, 'Необходимо выбрать пол пользователя'),
 });
 
 export type IAddUsersSchemaInitialType = z.input<typeof AddUsersSchema>;

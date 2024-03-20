@@ -2,7 +2,7 @@ import { Box, Spinner } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { forwardRef } from 'react';
 
-export const CenteredSpinner = forwardRef<HTMLDivElement, void>((_, ref) => (
+export const CenteredSpinner = forwardRef<HTMLDivElement>((_, ref) => (
   <Box
     ref={ref}
     position="absolute"

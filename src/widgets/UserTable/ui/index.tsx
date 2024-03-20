@@ -16,7 +16,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { enqueueSnackbar } from 'notistack';
 import { useState } from 'react';
-import { FaEdit } from 'react-icons/fa';
+import { FaEdit, FaTrash } from 'react-icons/fa';
 
 import { Modal } from '@/src/entities/modal';
 import { deleteUser, getUsers } from '@/src/entities/user/api/userApi';
@@ -47,7 +47,7 @@ export const UserTable = () => {
     queryFn: getUsers,
   });
 
-  const deleteOneUser = useMutation({
+  const { mutate: deleteOneUser, isPending } = useMutation({
     mutationFn: (id: string) => deleteUser(id),
     onError: (e) => {
       enqueueSnackbar(e.message || 'Ошибка запроса', {
@@ -71,87 +71,94 @@ export const UserTable = () => {
   };
   return (
     <>
-      {isLoading ? (
+      {(isLoading || isPending) && (
         <MotionSpinner
           initial="initial"
           animate="animate"
           variants={initialAnimation}
         />
-      ) : (
-        users && (
-          <MotionBox
-            initial="initial"
-            animate="animate"
-            variants={initialAnimation}
-          >
-            <Flex width={'100%'} justifyContent={'flex-end'} mb={3}>
-              <Button
-                _hover={{
-                  borderBottom: '2px solid',
-                  borderBottomRadius: '0%',
-                  borderColor: 'blue.500',
-                }}
-                variant={'text'}
-                onClick={onOpen}
-              >
-                Создать нового пользователя
-              </Button>
-            </Flex>
-            <TableContainer>
-              <Table variant="simple">
-                <Thead>
-                  <Tr>
-                    {columns.map((item, key) => (
-                      <Th key={key}>{item}</Th>
-                    ))}
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {users.result?.map((item) => (
-                    <Tr key={item._id}>
-                      <Th>{item.firstName}</Th>
-                      <Th>{item.lastName}</Th>
-                      <Th>{item.middleName}</Th>
-                      <Th>{item.fullName}</Th>
-                      <Th>{dayjs(item.birth).format('DD.MM.YYYY')}</Th>
-                      <Th>{item.phone}</Th>
-                      <Th onClick={() => deleteOneUser.mutate(item._id)}>
-                        {item.gender}
-                      </Th>
-                      <Th>
+      )}
+      {users && (
+        <MotionBox
+          initial="initial"
+          animate="animate"
+          variants={initialAnimation}
+        >
+          <Flex width={'100%'} justifyContent={'flex-end'} mb={3}>
+            <Button
+              _hover={{
+                borderBottom: '2px solid',
+                borderBottomRadius: '0%',
+                borderColor: 'blue.500',
+              }}
+              variant={'text'}
+              onClick={onOpen}
+              isDisabled={isLoading || isPending}
+            >
+              Создать нового пользователя
+            </Button>
+          </Flex>
+          <TableContainer>
+            <Table variant="simple">
+              <Thead>
+                <Tr>
+                  {columns.map((item, key) => (
+                    <Th key={key}>{item}</Th>
+                  ))}
+                </Tr>
+              </Thead>
+              <Tbody>
+                {users.result?.map((item) => (
+                  <Tr key={item._id}>
+                    <Th>{item.firstName}</Th>
+                    <Th>{item.lastName}</Th>
+                    <Th>{item.middleName}</Th>
+                    <Th>{item.fullName}</Th>
+                    <Th>{dayjs(item.birth).format('DD.MM.YYYY')}</Th>
+                    <Th>{item.phone}</Th>
+                    <Th>{item.gender}</Th>
+                    <Th>
+                      <Flex gap={3}>
                         <IconButton
                           onClick={() => handleOnOpenModal(item._id)}
                           aria-label="Cоздать нового пользователя"
                           icon={<FaEdit />}
+                          isDisabled={isLoading || isPending}
                         />
-                      </Th>
-                    </Tr>
-                  ))}
-                </Tbody>
-              </Table>
-            </TableContainer>
-            <Modal
-              isOpen={isOpen && !selectedUserId}
-              onClose={onClose}
-              title="Создание нового пользователя"
-              actionTitle="Сохранить"
-              actionType="submit"
-              formId="addUserForm"
-            >
-              <AddUserForm formId={'addUserForm'} />
-            </Modal>
-            <Modal
-              isOpen={!!selectedUserId}
-              onClose={handleOnCloseModal}
-              title="Изменение информации о пользователе"
-              actionTitle="Сохранить"
-              actionType="submit"
-              formId={selectedUserId}
-            >
-              {selectedUserId && <EditUserForm id={selectedUserId} />}
-            </Modal>
-          </MotionBox>
-        )
+                        <IconButton
+                          onClick={() => deleteOneUser(item._id)}
+                          aria-label="Удалить пользователя"
+                          icon={<FaTrash />}
+                          isDisabled={isLoading || isPending}
+                        />
+                      </Flex>
+                    </Th>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </TableContainer>
+          <Modal
+            isOpen={isOpen && !selectedUserId}
+            onClose={onClose}
+            title="Создание нового пользователя"
+            actionTitle="Сохранить"
+            actionType="submit"
+            formId="addUserForm"
+          >
+            <AddUserForm closeModal={onClose} formId={'addUserForm'} />
+          </Modal>
+          <Modal
+            isOpen={!!selectedUserId}
+            onClose={handleOnCloseModal}
+            title="Изменение информации о пользователе"
+            actionTitle="Сохранить"
+            actionType="submit"
+            formId={selectedUserId}
+          >
+            {selectedUserId && <EditUserForm id={selectedUserId} />}
+          </Modal>
+        </MotionBox>
       )}
     </>
   );

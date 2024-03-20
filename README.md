@@ -1,4 +1,5 @@
-В этом проекте можно познакомиться
--- С chakra-ui
--- С tanstack/react-query
--- С react-big-calendar
+В этом проекте я тестирую
+-- chakra-ui
+-- tanstack/react-query
+-- nextJS - app directory
+-- mongoDB
