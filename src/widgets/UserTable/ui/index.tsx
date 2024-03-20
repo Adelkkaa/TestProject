@@ -48,6 +48,29 @@ export const UserTable = () => {
       gender: '123',
     });
   };
+  //   useEffect(() => {
+  //     const fetcher = async (data: IUserWithoutId) => {
+  //       try {
+  //         const res = await baseApi.post('/users', data, {
+  //           headers: { 'Content-Type': 'application/json;charset=utf-8' },
+  //         });
+
+  //         return res.data;
+  //       } catch (e) {
+  //         console.info(e);
+  //       }
+  //     };
+  //     fetcher({
+  //       firstName: '123',
+  //       lastName: '123',
+  //       middleName: '123',
+  //       fullName: '123',
+  //       birth: '123',
+  //       phone: '123',
+  //       gender: '123',
+  //     });
+  //   }, []);
+
   return (
     <>
       {isLoading ? (

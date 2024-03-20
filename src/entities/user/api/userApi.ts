@@ -10,5 +10,6 @@ export const addNewUser = async (data: IUserWithoutId) => {
   const res = await baseApi.post('/users', data, {
     headers: { 'Content-Type': 'application/json;charset=utf-8' },
   });
+
   return res.data;
 };

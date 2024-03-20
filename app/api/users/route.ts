@@ -22,14 +22,9 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const { db } = await getDbAndReqBody(clientPromise, request);
+    const { db, reqBody } = await getDbAndReqBody(clientPromise, request);
 
-    console.info(db);
-    // Получение тела запроса
-    const body = await request.json();
-
-    // Добавление нового пользователя в коллекцию
-    const result = await db.collection('users').insertOne(body);
+    const result = await db.collection('users').insertOne(reqBody);
 
     return NextResponse.json({ result: result, error: null });
   } catch (error) {
