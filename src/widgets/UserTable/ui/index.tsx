@@ -156,7 +156,12 @@ export const UserTable = () => {
             actionType="submit"
             formId={selectedUserId}
           >
-            {selectedUserId && <EditUserForm id={selectedUserId} />}
+            {selectedUserId && (
+              <EditUserForm
+                closeModal={handleOnCloseModal}
+                id={selectedUserId}
+              />
+            )}
           </Modal>
         </MotionBox>
       )}
