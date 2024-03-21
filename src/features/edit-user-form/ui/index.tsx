@@ -10,6 +10,7 @@ import { editUser, getSingleUser } from '@/src/entities/user/api/userApi';
 import { DatePicker, PhoneInput, Select, Spinner } from '@/src/shared';
 import type { IReturn, IUser, IUserWithoutId } from '@/src/shared/types';
 import { InputField } from '@/src/shared/ui/Input';
+import { getChangedFormFields } from '@/src/shared/utils/getChangedFormFields';
 
 import {
   EditUsersSchema,
@@ -46,10 +47,14 @@ export const EditUserForm: FC<IEditUserForm> = ({ id, closeModal }) => {
     },
   });
 
-  const { handleSubmit, reset } = methods;
+  const {
+    handleSubmit,
+    reset,
+    formState: { dirtyFields },
+  } = methods;
 
   const { mutate: editUserMutation, isPending } = useMutation({
-    mutationFn: (data: IUserWithoutId) => editUser(id, data),
+    mutationFn: (data: Partial<IUserWithoutId>) => editUser(id, data),
     onError: (e) => {
       enqueueSnackbar(e.message || 'Ошибка запроса', {
         preventDuplicate: false,
@@ -70,10 +75,16 @@ export const EditUserForm: FC<IEditUserForm> = ({ id, closeModal }) => {
   });
 
   const onSubmit: SubmitHandler<IEditUsersSchemaType> = async (data) => {
-    console.info('Prepared Data', data);
+    const preparedData = getChangedFormFields(data, dirtyFields);
+    const lastName = preparedData.lastName || data.lastName;
+    const firstName = preparedData.firstName || data.firstName;
+    const middleName = preparedData.middleName || data.middleName;
+    const fullName = `${lastName} ${firstName} ${middleName}`;
+    console.info({ ...preparedData, fullName: fullName });
+
     editUserMutation({
-      ...data,
-      fullName: `${data.lastName} ${data.firstName} ${data.middleName}`,
+      ...preparedData,
+      fullName: fullName,
     });
   };
   return (

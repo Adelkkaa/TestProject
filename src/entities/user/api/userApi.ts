@@ -20,7 +20,7 @@ export const addNewUser = async (data: IUserWithoutId) => {
   return res.data;
 };
 
-export const editUser = async (id: string, data: IUserWithoutId) => {
+export const editUser = async (id: string, data: Partial<IUserWithoutId>) => {
   const res = await baseApi.patch(`/users/${id}`, data, {
     headers: { 'Content-Type': 'application/json;charset=utf-8' },
   });
