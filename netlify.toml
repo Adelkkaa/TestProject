@@ -1,5 +1,5 @@
 [build]
-    command = 'yarn run build-netlify'
-    publish = 'out'
+    command = "yarn run build-netlify"
+    publish = "out"
 [dev]
-    command = 'yarn run start
+    command = "yarn run start"
