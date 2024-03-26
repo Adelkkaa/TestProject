@@ -1,3 +1,4 @@
+'use client'
 import { Image } from '@chakra-ui/next-js';
 import { Flex, Heading, Text } from '@chakra-ui/react';
 import { useInView } from 'framer-motion';

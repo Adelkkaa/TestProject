@@ -1,11 +1,12 @@
-'use client';
+"use client";
 
 import dynamic from 'next/dynamic';
 
-const UsersPage = dynamic(() => import('@/src/pages/Users'), {
+const Users = dynamic(() => import('@/src/pages/Users'), {
   ssr: false,
 });
 
-export default function Page() {
-  return <UsersPage />;
+
+export default function UsersPage() {
+  return <Users />;
 }

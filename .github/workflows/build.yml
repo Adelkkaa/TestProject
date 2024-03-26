@@ -25,5 +25,11 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: Create .env file
+        run: |
+          echo "NEXT_PUBLIC_DB_URL=${{ secrets.DB_URL }}" >> .env
+          echo "NEXT_PUBLIC_DB_NAME=test-project" >> .env
+          echo "NEXT_PUBLIC_API_BASE_URL=/api" >> .env
+
       - name: Build
         run: yarn build

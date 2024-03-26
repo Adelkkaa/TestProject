@@ -1,3 +1,5 @@
+'use client'
+
 import { Flex, Heading } from '@chakra-ui/react';
 
 import { HomeCard } from '@/src/entities/home-card';

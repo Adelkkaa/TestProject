@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
 import dynamic from 'next/dynamic';
 
-const DashboardPage = dynamic(() => import('@/src/pages/Dashboard'), {
+const Dashboard = dynamic(() => import('@/src/pages/Dashboard'), {
   ssr: false,
 });
 
-export default function Page() {
-  return <DashboardPage />;
+export default function DashboardPage() {
+  return <Dashboard />;
 }
