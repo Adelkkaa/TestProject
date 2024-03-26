@@ -1,0 +1,1 @@
+export {IconReact} from './IconReact'

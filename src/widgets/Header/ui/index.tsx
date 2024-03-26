@@ -54,8 +54,8 @@ export const Header = () => {
           </Box>
         </Flex>
         <Flex gap={12} fontSize={24}>
-          <Link href="/test">Test</Link>
-          <Link href="/second">Test2</Link>
+          <Link href="/users">Users</Link>
+          <Link href="/dashboard">Dashboard</Link>
         </Flex>
       </Flex>
     </motion.header>

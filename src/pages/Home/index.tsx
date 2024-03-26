@@ -1,7 +1,7 @@
 'use client';
 
-import { UserTable } from '@/src/widgets/UserTable';
+import { HomeContent } from '@/src/widgets/HomeContent';
 
-const HomePage = () => <UserTable />;
+const HomePage = () => <HomeContent />;
 
 export default HomePage;

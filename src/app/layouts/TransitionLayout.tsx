@@ -15,7 +15,8 @@ import type { FC, PropsWithChildren } from 'react';
 import { MotionBox, initialAnimation } from '@/src/shared';
 import { Footer, Header } from '@/src/widgets';
 
-import theme from '../../../app/theme';
+import theme from '../theme/theme';
+
 
 const queryClient = new QueryClient();
 

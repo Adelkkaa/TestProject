@@ -15,3 +15,8 @@ export type IUser = {
 };
 
 export type IUserWithoutId = Omit<IUser, '_id'>;
+
+export type IIconProps = {
+  width?: string,
+  height?: string
+}

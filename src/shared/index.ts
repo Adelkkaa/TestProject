@@ -11,6 +11,7 @@ export {
   PhoneInput,
   Select,
   Spinner,
+  MotionFlex
 } from './ui';
 
 export { baseApi } from './api/apiInstance';
