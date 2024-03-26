@@ -1,0 +1,35 @@
+name: Main Pipeline
+
+on:
+ push:
+    branches:
+      - develop
+      - main
+ pull_request:
+    branches:
+      - main
+
+jobs:
+ build:
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.head_commit.message, 'Merge pull request') || github.ref == 'refs/heads/develop'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20.10.0' # Укажите нужную версию Node.js
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Create .env file
+        run: |
+          echo "NEXT_PUBLIC_DB_URL=${{ secrets.DB_URL }}" >> .env
+          echo "NEXT_PUBLIC_DB_NAME=test-project" >> .env
+          echo "NEXT_PUBLIC_API_BASE_URL=/api" >> .env
+
+      - name: Build
+        run: yarn build

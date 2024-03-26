@@ -1,6 +1,10 @@
 'use client';
 
-import { HomeContent } from '@/src/widgets/HomeContent';
+import dynamic from 'next/dynamic';
+
+const HomeContent = dynamic(() => import('@/src/widgets/HomeContent'), {
+  ssr: false,
+});
 
 const HomePage = () => <HomeContent />;
 

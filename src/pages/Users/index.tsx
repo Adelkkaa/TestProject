@@ -1,6 +1,11 @@
 'use client';
 
-import { UserTable } from '@/src/widgets/UserTable';
+
+import dynamic from 'next/dynamic';
+
+const UserTable = dynamic(() => import('@/src/widgets/UserTable'), {
+  ssr: false,
+});
 
 const UsersPage = () => <UserTable />;
 
