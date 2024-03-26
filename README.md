@@ -3,3 +3,4 @@
 -- tanstack/react-query
 -- nextJS - app directory
 -- mongoDB
+-- ci/cd
