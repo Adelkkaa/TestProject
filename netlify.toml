@@ -2,3 +2,5 @@
     command = "yarn run build"
 [dev]
     command = "yarn run start"
+[build.processing]
+    skip_processing = true
