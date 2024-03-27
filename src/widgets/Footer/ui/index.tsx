@@ -4,7 +4,9 @@ import { motion } from 'framer-motion';
 import { MotionText, initialAnimation } from '@/src/shared';
 
 export const Footer = () => {
+
   const title = 'Author: Sharipov Adel Sirinovich'.split('');
+  
 
   return (
     <motion.footer

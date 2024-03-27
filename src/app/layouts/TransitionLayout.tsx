@@ -33,7 +33,7 @@ export const Providers: FC<PropsWithChildren> = ({ children }) => {
           <HydrationBoundary>
             <ColorModeScript initialColorMode={theme.config.initialColorMode} />
             <SnackbarProvider>
-              <Container maxWidth={'95%'}>
+              <Container maxWidth={'1920px'} width={'95%'}>
                 <Flex
                   minHeight={'100vh'}
                   direction={'column'}

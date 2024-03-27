@@ -20,32 +20,30 @@ import { useState } from 'react';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 
 import { Modal } from '@/src/entities/modal';
-import { deleteUser, getUsers } from '@/src/entities/user/api/userApi';
+import { getTasks } from '@/src/entities/task';
+import { deleteUser } from '@/src/entities/user/api/userApi';
 import { AddUserForm } from '@/src/features/add-user-form';
 import { EditUserForm } from '@/src/features/edit-user-form';
-import type { IReturn, IUser } from '@/src/shared';
-import { AnimatedCounter, MotionBox, MotionSpinner, initialAnimation } from '@/src/shared';
+import type { IReturn } from '@/src/shared';
+import {
+  AnimatedCounter,
+  MotionBox,
+  MotionSpinner,
+  initialAnimation,
+} from '@/src/shared';
+import type { ITask } from '@/src/shared/types';
 
-const columns = [
-  'Имя',
-  'Фамилия',
-  'Отчество',
-  'ФИО',
-  'Дата рождения',
-  'Номер телефона',
-  'Пол',
-  '',
-];
+const columns = ['Название задачи', 'Дата начала', 'Дата окончания', ''];
 
-export const UserTable = () => {
+export const TaskTable = () => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const { onOpen, isOpen, onClose } = useDisclosure();
 
   const queryClient = useQueryClient();
 
-  const { data: users, isLoading } = useQuery<IReturn<IUser[]>>({
-    queryKey: ['users'],
-    queryFn: getUsers,
+  const { data: tasks, isLoading } = useQuery<IReturn<ITask[]>>({
+    queryKey: ['tasks'],
+    queryFn: getTasks,
   });
 
   const { mutate: deleteOneUser, isPending } = useMutation({
@@ -79,14 +77,17 @@ export const UserTable = () => {
           variants={initialAnimation}
         />
       )}
-      {users && (
+      {tasks && (
         <MotionBox
           initial="initial"
           animate="animate"
           variants={initialAnimation}
         >
           <Flex width={'100%'} justifyContent={'space-between'} mb={3}>
-            <Text>Количество записей: <AnimatedCounter from={0} to={users.result?.length || 0} /></Text>
+            <Text>
+              Количество записей:{' '}
+              <AnimatedCounter from={0} to={tasks.result?.length || 0} />
+            </Text>
             <Button
               _hover={{
                 borderBottom: '2px solid',
@@ -110,26 +111,23 @@ export const UserTable = () => {
                 </Tr>
               </Thead>
               <Tbody>
-                {users.result?.map((item) => (
+                {tasks.result?.map((item) => (
                   <Tr key={item._id}>
-                    <Th>{item.firstName}</Th>
-                    <Th>{item.lastName}</Th>
-                    <Th>{item.middleName}</Th>
-                    <Th>{item.fullName}</Th>
-                    <Th>{dayjs(item.birth).format('DD.MM.YYYY')}</Th>
-                    <Th>{item.phone}</Th>
-                    <Th>{item.gender}</Th>
+                    <Th>{item.name}</Th>
+                    <Th>{dayjs(item.date_start).format('HH:mm (DD.MM.YYYY)')}</Th>
+                    <Th>{dayjs(item.date_end).format('HH:mm (DD.MM.YYYY)')}</Th>
+                    <Th>{item.user.fullName}</Th>
                     <Th>
                       <Flex gap={3}>
                         <IconButton
                           onClick={() => handleOnOpenModal(item._id)}
-                          aria-label="Cоздать нового пользователя"
+                          aria-label="Cоздать новую задачу"
                           icon={<FaEdit />}
                           isDisabled={isLoading || isPending}
                         />
                         <IconButton
                           onClick={() => deleteOneUser(item._id)}
-                          aria-label="Удалить пользователя"
+                          aria-label="Удалить задачу"
                           icon={<FaTrash />}
                           isDisabled={isLoading || isPending}
                         />
