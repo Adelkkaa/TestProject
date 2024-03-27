@@ -16,6 +16,17 @@ export type IUser = {
 
 export type IUserWithoutId = Omit<IUser, '_id'>;
 
+export type ITask = {
+  _id: string,
+  name: string,
+  date_start: string,
+  date_end: string,
+  user: IUser
+}
+
+export type ITaskWithoutId = Omit<ITask, '_id'>;
+
+
 export type IIconProps = {
   width?: string,
   height?: string

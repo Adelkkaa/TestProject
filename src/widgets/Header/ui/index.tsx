@@ -69,6 +69,9 @@ export const Header = () => {
                     <Link textUnderlineOffset="10px" href="/users">
                       Пользователи
                     </Link>
+                    <Link textUnderlineOffset="10px" href="/tasks">
+                      Задачи
+                    </Link>
                     <Link textUnderlineOffset="10px" href="/dashboard">
                       Доска
                     </Link>
