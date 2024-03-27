@@ -3,6 +3,7 @@ export { initialAnimation } from './animations';
 export type { IReturn, IUser } from './types';
 
 export {
+  AnimatedCounter,
   DatePicker,
   MotionBox,
   MotionContainer,
@@ -13,6 +14,5 @@ export {
   Select,
   Spinner,
 } from './ui';
-
 
 export { baseApi } from './api/apiInstance';

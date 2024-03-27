@@ -7,6 +7,7 @@ import {
   Table,
   TableContainer,
   Tbody,
+  Text,
   Th,
   Thead,
   Tr,
@@ -23,7 +24,7 @@ import { deleteUser, getUsers } from '@/src/entities/user/api/userApi';
 import { AddUserForm } from '@/src/features/add-user-form';
 import { EditUserForm } from '@/src/features/edit-user-form';
 import type { IReturn, IUser } from '@/src/shared';
-import { MotionBox, MotionSpinner, initialAnimation } from '@/src/shared';
+import { AnimatedCounter, MotionBox, MotionSpinner, initialAnimation } from '@/src/shared';
 
 const columns = [
   'Имя',
@@ -84,7 +85,8 @@ export const UserTable = () => {
           animate="animate"
           variants={initialAnimation}
         >
-          <Flex width={'100%'} justifyContent={'flex-end'} mb={3}>
+          <Flex width={'100%'} justifyContent={'space-between'} mb={3}>
+            <Text>Количество записей: <AnimatedCounter from={0} to={users.result?.length || 0} /></Text>
             <Button
               _hover={{
                 borderBottom: '2px solid',
