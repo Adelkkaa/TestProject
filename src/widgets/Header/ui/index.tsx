@@ -21,7 +21,6 @@ import { MotionText, initialAnimation } from '@/src/shared';
 export const Header = () => {
   const { toggleColorMode, colorMode } = useColorMode();
 
-  console.info(colorMode);
   const title = 'My Test'.toUpperCase().split('');
 
   const { isOpen, onOpen, onClose } = useDisclosure();
