@@ -1,5 +1,5 @@
 import { baseApi } from '@/src/shared';
-import type { ITaskWithoutId } from '@/src/shared/types';
+import type { IAddTaskQuery, ITaskWithoutId } from '@/src/shared/types';
 
 export const getTasks = async () => {
   const res = await baseApi.get('/tasks');
@@ -12,7 +12,7 @@ export const getSingleTask = async (id: string) => {
   return res.data;
 };
 
-export const addNewTask = async (data: ITaskWithoutId) => {
+export const addNewTask = async (data: IAddTaskQuery) => {
   const res = await baseApi.post('/tasks', data, {
     headers: { 'Content-Type': 'application/json;charset=utf-8' },
   });

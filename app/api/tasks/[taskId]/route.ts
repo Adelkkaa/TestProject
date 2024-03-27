@@ -7,41 +7,45 @@ import { getDbAndReqBody } from '@/src/shared/utils/api/dbConnection';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: { taskId: string } }
 ) {
-  const { db } = await getDbAndReqBody(clientPromise, null);
-  const id = params.userId;
+  try {
+    const { db } = await getDbAndReqBody(clientPromise, null);
+    const id = params.taskId;
 
-  const isValidId = ObjectId.isValid(id);
+    const isValidId = ObjectId.isValid(id);
 
-  if (!isValidId) {
-    return NextResponse.json({
-      message: 'Wrong task id',
-      status: 404,
-    });
+    if (!isValidId) {
+      throw new Error('Wrong Task Id')
+    }
+
+    const result = await db
+      .collection('tasks')
+      .findOne({ _id: new ObjectId(id) });
+
+    return NextResponse.json({ result: result, error: null });
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ result: null, error: (error as Error).message }),
+      {
+        status: 500,
+      }
+    );
   }
-
-  const result = await db
-    .collection('tasks')
-    .findOne({ _id: new ObjectId(id) });
-
-  return NextResponse.json({ result: result, error: null });
 }
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: { taskId: string } }
 ) {
-  const { db, reqBody } = await getDbAndReqBody(clientPromise, request);
-  const id = params.userId;
+  try {
+    const { db, reqBody } = await getDbAndReqBody(clientPromise, request);
+  const id = params.taskId;
 
   const isValidId = ObjectId.isValid(id);
 
   if (!isValidId) {
-    return NextResponse.json({
-      message: 'Wrong task id',
-      status: 404,
-    });
+    throw new Error('Wrong Task Id')
   }
 
   const result = await db
@@ -49,23 +53,29 @@ export async function PATCH(
     .updateOne({ _id: new ObjectId(id) }, { $set: reqBody });
 
   return NextResponse.json({ result: result, error: null });
+  }
+  catch (error) {
+    return new Response(
+      JSON.stringify({ result: null, error: (error as Error).message }),
+      {
+        status: 500,
+      }
+    );
+  }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: { taskId: string } }
 ) {
   try {
     const { db } = await getDbAndReqBody(clientPromise, null);
-    const id = params.userId;
+    const id = params.taskId;
 
     const isValidId = ObjectId.isValid(id);
 
     if (!isValidId) {
-      return NextResponse.json({
-        message: 'Wrong task id',
-        status: 404,
-      });
+      throw new Error('Wrong Task Id')
     }
 
     const result = await db

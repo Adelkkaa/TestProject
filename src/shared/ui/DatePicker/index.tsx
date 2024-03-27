@@ -10,6 +10,7 @@ type TInputField<
 > = {
   name: TName;
   label: string;
+  dateFormat?: string;
 } & Omit<ReactDatePickerProps, 'onChange'>;
 
 export const DatePicker = <
@@ -18,6 +19,7 @@ export const DatePicker = <
 >({
   name,
   label,
+  dateFormat = 'dd.MM.yyyy',
   ...props
 }: TInputField<TFieldValues, TName>) => {
   const {
@@ -37,7 +39,7 @@ export const DatePicker = <
         value={value}
         selected={value}
         onChange={(date) => onChange(date)}
-        dateFormat="dd.MM.yyyy"
+        dateFormat={dateFormat}
         className={`custom-datepicker ${error ? 'custom-datepicker__error' : ''}`}
         wrapperClassName="custom-datepicker__wrapper"
       />
