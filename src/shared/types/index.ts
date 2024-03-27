@@ -20,3 +20,5 @@ export type IIconProps = {
   width?: string,
   height?: string
 }
+
+export type IBreakPoints = 'base' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'

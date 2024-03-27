@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import { Image } from '@chakra-ui/next-js';
 import { Flex, Heading, Text } from '@chakra-ui/react';
 import { useInView } from 'framer-motion';
@@ -19,11 +19,20 @@ export const HomeCard: FC<IHomeCardProps> = ({
   const isInView = useInView(ref, { once: true });
 
   return (
-    <Flex ref={ref} gap='32px' direction={isReverse ? {base: 'column-reverse', md: 'row-reverse'} : {base: 'column-reverse', md: 'row'}} alignItems={{base: 'center', md: 'flex-start'}}>
+    <Flex
+      ref={ref}
+      gap="32px"
+      direction={
+        isReverse
+          ? { base: 'column-reverse', md: 'row-reverse' }
+          : { base: 'column-reverse', md: 'row' }
+      }
+      alignItems={{ base: 'center', md: 'flex-start' }}
+    >
       <MotionBox
-        w={{md: '70%', base: '100%'}}
+        w={{ md: '70%', base: '100%' }}
         initial="initial"
-        animate= {isInView ? 'animate' : ''}
+        animate={isInView ? 'animate' : ''}
         viewport={isInView}
         variants={FlexItemAnimation}
         custom={isReverse ? 1 : -1}
@@ -32,10 +41,10 @@ export const HomeCard: FC<IHomeCardProps> = ({
       </MotionBox>
       <MotionFlex
         direction={'column'}
-        w={{xl: '70%', lg: '70%', md: '80%', base: '100%'}}
-        gap={{xl: '32px', base: '16px' }}
+        w={{ xl: '70%', lg: '70%', md: '80%', base: '100%' }}
+        gap={{ xl: '32px', base: '16px' }}
         initial="initial"
-        animate= {isInView ? 'animate' : ''}
+        animate={isInView ? 'animate' : ''}
         viewport={isInView}
         variants={FlexItemAnimation}
         custom={isReverse ? -1 : 1}
