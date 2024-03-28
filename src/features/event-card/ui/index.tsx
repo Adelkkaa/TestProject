@@ -22,7 +22,7 @@ export const EventCard: FC<IEventCardProps> = ({ event }) => {
         height: '100%',
         width: '100%',
         color: '#000',
-        backgroundColor: dayjs(date_end) > dayjs() ? 'red' : 'green',
+        backgroundColor: dayjs(date_end) > dayjs() ? 'green' : 'red',
         border: '3px solid grey',
         borderRadius: '5px',
       }}
