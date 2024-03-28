@@ -9,46 +9,73 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { userId: string } }
 ) {
-  const { db } = await getDbAndReqBody(clientPromise, null);
-  const id = params.userId;
+  try {
+    const { db } = await getDbAndReqBody(clientPromise, null);
+    const id = params.userId;
 
-  const isValidId = ObjectId.isValid(id);
+    const isValidId = ObjectId.isValid(id);
 
-  if (!isValidId) {
-    return NextResponse.json({
-      message: 'Wrong user id',
-      status: 404,
-    });
+    if (!isValidId) {
+      throw new Error('Wrong User Id');
+    }
+
+    const result = await db
+      .collection('users')
+      .findOne({ _id: new ObjectId(id) });
+
+    return NextResponse.json({ result: result, error: null });
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ result: null, error: (error as Error).message }),
+      {
+        status: 500,
+      }
+    );
   }
-
-  const result = await db
-    .collection('users')
-    .findOne({ _id: new ObjectId(id) });
-
-  return NextResponse.json({ result: result, error: null });
 }
 
 export async function PATCH(
   request: NextRequest,
   { params }: { params: { userId: string } }
 ) {
-  const { db, reqBody } = await getDbAndReqBody(clientPromise, request);
-  const id = params.userId;
+  try {
+    const { db, reqBody } = await getDbAndReqBody(clientPromise, request);
+    const id = params.userId;
 
-  const isValidId = ObjectId.isValid(id);
+    const isValidId = ObjectId.isValid(id);
 
-  if (!isValidId) {
-    return NextResponse.json({
-      message: 'Wrong user id',
-      status: 404,
-    });
+    if (!isValidId) {
+      throw new Error('Wrong User Id');
+    }
+
+    // Обновляем данные пользователя
+    const result = await db
+      .collection('users')
+      .updateOne({ _id: new ObjectId(id) }, { $set: reqBody });
+
+    // Получаем все данные о текущем пользователе
+    const newUser = await db
+      .collection('users')
+      .findOne({ _id: new ObjectId(id) });
+
+
+    // Обновляем в задачах пользователя
+    await db
+      .collection('tasks')
+      .updateMany(
+        { 'user._id': new ObjectId(id) },
+        { $set: { user: newUser } }
+      );
+
+    return NextResponse.json({ result: result, error: null });
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ result: null, error: (error as Error).message }),
+      {
+        status: 500,
+      }
+    );
   }
-
-  const result = await db
-    .collection('users')
-    .updateOne({ _id: new ObjectId(id) }, { $set: reqBody });
-
-  return NextResponse.json({ result: result, error: null });
 }
 
 export async function DELETE(
@@ -62,10 +89,7 @@ export async function DELETE(
     const isValidId = ObjectId.isValid(id);
 
     if (!isValidId) {
-      return NextResponse.json({
-        message: 'Wrong user id',
-        status: 404,
-      });
+      throw new Error('Wrong User Id');
     }
 
     const result = await db

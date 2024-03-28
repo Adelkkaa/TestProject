@@ -63,9 +63,9 @@ export const EditUserForm: FC<IEditUserForm> = ({ id, closeModal }) => {
       });
     },
     onSuccess: () => {
-      //todo: try to search analog of invalidatesTags callback in tanstack query
       queryClient.invalidateQueries({ queryKey: ['users', { id: id }] });
       queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
       enqueueSnackbar('Данные пользователя успешно изменены!', {
         preventDuplicate: false,
         variant: 'success',

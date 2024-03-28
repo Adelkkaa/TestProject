@@ -18,6 +18,8 @@ import { FaMoon, FaSun } from 'react-icons/fa';
 
 import { MotionText, initialAnimation } from '@/src/shared';
 
+import { headerLinks } from '../constants/links';
+
 export const Header = () => {
   const { toggleColorMode, colorMode } = useColorMode();
 
@@ -25,9 +27,13 @@ export const Header = () => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const handleClick = () => {
+  const handleOpen = () => {
     onOpen();
   };
+
+  const handleClose = () => {
+    onClose()
+  }
 
   return (
     <motion.header
@@ -35,7 +41,12 @@ export const Header = () => {
       animate="animate"
       exit="exit"
       variants={initialAnimation}
-      style={{ position: 'sticky', top: 0, backgroundColor: `${colorMode === 'dark' ? '#1A202C' : '#FFFFFF'}`, marginBottom: '32px' }}
+      style={{
+        position: 'sticky',
+        top: 0,
+        backgroundColor: `${colorMode === 'dark' ? '#1A202C' : '#FFFFFF'}`,
+        marginBottom: '32px',
+      }}
     >
       <Flex
         borderBottomWidth={5}
@@ -48,10 +59,10 @@ export const Header = () => {
           <IconButton
             aria-label="open drawer"
             size="md"
-            onClick={() => handleClick()}
+            onClick={handleOpen}
             icon={<CiMenuBurger />}
           />
-          <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
+          <Drawer placement="left" onClose={handleClose} isOpen={isOpen}>
             <DrawerOverlay />
             <DrawerContent pt={5} pb={3}>
               <DrawerCloseButton />
@@ -63,18 +74,11 @@ export const Header = () => {
                   h={'100%'}
                 >
                   <Flex mt={10} gap={6} fontSize={24} direction="column">
-                    <Link textUnderlineOffset="10px" href="/">
-                      Домой
-                    </Link>
-                    <Link textUnderlineOffset="10px" href="/users">
-                      Пользователи
-                    </Link>
-                    <Link textUnderlineOffset="10px" href="/tasks">
-                      Задачи
-                    </Link>
-                    <Link textUnderlineOffset="10px" href="/dashboard">
-                      Доска
-                    </Link>
+                    {headerLinks.map((item) => (
+                      <Link key={item.href} textUnderlineOffset="10px" onClick={handleClose} href={item.href}>
+                        {item.name}
+                      </Link>
+                    ))}
                   </Flex>
                   <Flex justifyContent={'flex-end'}>
                     <IconButton
@@ -91,7 +95,7 @@ export const Header = () => {
             </DrawerContent>
           </Drawer>
           <Box>
-            <Link href={'/'}>
+            <Link href='/' userSelect='none'>
               {title.map((titleLetter, index) => (
                 <MotionText
                   fontSize={24}

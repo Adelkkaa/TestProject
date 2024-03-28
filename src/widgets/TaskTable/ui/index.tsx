@@ -20,10 +20,9 @@ import { useState } from 'react';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 
 import { Modal } from '@/src/entities/modal';
-import { getTasks } from '@/src/entities/task';
-import { deleteUser } from '@/src/entities/user/api/userApi';
-import { AddUserForm } from '@/src/features/add-user-form';
-import { EditUserForm } from '@/src/features/edit-user-form';
+import { deleteTask, getTasks } from '@/src/entities/task';
+import { AddTaskForm } from '@/src/features/add-task-form';
+import { EditTaskForm } from '@/src/features/edit-task-form';
 import type { IReturn } from '@/src/shared';
 import {
   AnimatedCounter,
@@ -33,10 +32,16 @@ import {
 } from '@/src/shared';
 import type { ITask } from '@/src/shared/types';
 
-const columns = ['Название задачи', 'Дата начала', 'Дата окончания', ''];
+const columns = [
+  'Название задачи',
+  'Дата начала',
+  'Дата окончания',
+  'Исполнитель',
+  '',
+];
 
 export const TaskTable = () => {
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const { onOpen, isOpen, onClose } = useDisclosure();
 
   const queryClient = useQueryClient();
@@ -46,8 +51,8 @@ export const TaskTable = () => {
     queryFn: getTasks,
   });
 
-  const { mutate: deleteOneUser, isPending } = useMutation({
-    mutationFn: (id: string) => deleteUser(id),
+  const { mutate: deleteOneTask, isPending } = useMutation({
+    mutationFn: (id: string) => deleteTask(id),
     onError: (e) => {
       enqueueSnackbar(e.message || 'Ошибка запроса', {
         preventDuplicate: false,
@@ -55,17 +60,17 @@ export const TaskTable = () => {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },
   });
 
   const handleOnCloseModal = () => {
-    setSelectedUserId(null);
+    setSelectedTaskId(null);
     onClose();
   };
 
   const handleOnOpenModal = (id: string) => {
-    setSelectedUserId(id);
+    setSelectedTaskId(id);
     onOpen();
   };
   return (
@@ -98,7 +103,7 @@ export const TaskTable = () => {
               onClick={onOpen}
               isDisabled={isLoading || isPending}
             >
-              Создать нового пользователя
+              Создать новую задачу
             </Button>
           </Flex>
           <TableContainer>
@@ -114,19 +119,21 @@ export const TaskTable = () => {
                 {tasks.result?.map((item) => (
                   <Tr key={item._id}>
                     <Th>{item.name}</Th>
-                    <Th>{dayjs(item.date_start).format('HH:mm (DD.MM.YYYY)')}</Th>
+                    <Th>
+                      {dayjs(item.date_start).format('HH:mm (DD.MM.YYYY)')}
+                    </Th>
                     <Th>{dayjs(item.date_end).format('HH:mm (DD.MM.YYYY)')}</Th>
                     <Th>{item.user.fullName}</Th>
                     <Th>
-                      <Flex gap={3}>
+                      <Flex gap={3} justifyContent={'flex-end'}>
                         <IconButton
                           onClick={() => handleOnOpenModal(item._id)}
-                          aria-label="Cоздать новую задачу"
+                          aria-label="Изменить задачу"
                           icon={<FaEdit />}
                           isDisabled={isLoading || isPending}
                         />
                         <IconButton
-                          onClick={() => deleteOneUser(item._id)}
+                          onClick={() => deleteOneTask(item._id)}
                           aria-label="Удалить задачу"
                           icon={<FaTrash />}
                           isDisabled={isLoading || isPending}
@@ -139,27 +146,27 @@ export const TaskTable = () => {
             </Table>
           </TableContainer>
           <Modal
-            isOpen={isOpen && !selectedUserId}
+            isOpen={isOpen && !selectedTaskId}
             onClose={onClose}
-            title="Создание нового пользователя"
+            title="Создание новой задачи"
             actionTitle="Сохранить"
             actionType="submit"
-            formId="addUserForm"
+            formId="addTaskForm"
           >
-            <AddUserForm closeModal={onClose} formId={'addUserForm'} />
+            <AddTaskForm closeModal={onClose} formId={'addTaskForm'} />
           </Modal>
           <Modal
-            isOpen={!!selectedUserId}
+            isOpen={!!selectedTaskId}
             onClose={handleOnCloseModal}
             title="Изменение информации о пользователе"
             actionTitle="Сохранить"
             actionType="submit"
-            formId={selectedUserId}
+            formId={selectedTaskId}
           >
-            {selectedUserId && (
-              <EditUserForm
+            {selectedTaskId && (
+              <EditTaskForm
                 closeModal={handleOnCloseModal}
-                id={selectedUserId}
+                id={selectedTaskId}
               />
             )}
           </Modal>

@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
@@ -25,7 +26,11 @@ export async function POST(request: NextRequest) {
   try {
     const { db, reqBody } = await getDbAndReqBody(clientPromise, request);
 
-    const result = await db.collection('tasks').insertOne(reqBody);
+    const user = await db
+      .collection('users')
+      .findOne({ _id: new ObjectId(reqBody.user as string) });
+
+    const result = await db.collection('tasks').insertOne({ ...reqBody, user });
 
     return NextResponse.json({ result: result, error: null });
   } catch (error) {
