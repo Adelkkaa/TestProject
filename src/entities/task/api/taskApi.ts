@@ -1,5 +1,5 @@
 import { baseApi } from '@/src/shared';
-import type { IAddTaskQuery, ITaskWithoutId } from '@/src/shared/types';
+import type { IAddTaskQuery } from '@/src/shared/types';
 
 export const getTasks = async () => {
   const res = await baseApi.get('/tasks');
@@ -20,7 +20,7 @@ export const addNewTask = async (data: IAddTaskQuery) => {
   return res.data;
 };
 
-export const editTask = async (id: string, data: Partial<ITaskWithoutId>) => {
+export const editTask = async (id: string, data: Partial<IAddTaskQuery>) => {
   const res = await baseApi.patch(`/tasks/${id}`, data, {
     headers: { 'Content-Type': 'application/json;charset=utf-8' },
   });

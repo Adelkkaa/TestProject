@@ -2,52 +2,67 @@
 import { Flex } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 import { enqueueSnackbar } from 'notistack';
-import { useEffect, type FC } from 'react';
+import type { FC } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
-import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 
-import { addNewTask } from '@/src/entities/task';
+import { editTask, getSingleTask } from '@/src/entities/task';
 import { getUsers } from '@/src/entities/user';
 import { DatePicker, Select, Spinner } from '@/src/shared';
-import type { IAddTaskQuery, IReturn, IUser } from '@/src/shared/types';
+import type { IAddTaskQuery, IReturn, ITask, IUser } from '@/src/shared/types';
 import { InputField } from '@/src/shared/ui/Input';
+import { getChangedFormFields } from '@/src/shared/utils/getChangedFormFields';
 
 import {
-  AddTaskSchema,
-  type IAddTaskSchemaInitialType,
-  type IAddTaskSchemaType,
-} from '../model/AddTaskForm.schema';
-import { defaultValues } from '../model/defaultValues';
+  EditTaskSchema,
+  type IEditTaskSchemaInitialType,
+  type IEditTaskSchemaType,
+} from '../model/EditTaskForm.schema';
 
-type IAddTaskFormProps = {
-  formId: string;
+type IEditTaskForm = {
+  id: string;
   closeModal: () => void;
 };
 
-export const AddTaskForm: FC<IAddTaskFormProps> = ({ formId, closeModal }) => {
+export const EditTaskForm: FC<IEditTaskForm> = ({ id, closeModal }) => {
   const queryClient = useQueryClient();
 
-  const methods = useForm<
-    IAddTaskSchemaInitialType,
-    unknown,
-    IAddTaskSchemaType
-  >({
-    mode: 'onSubmit',
-    resolver: zodResolver(AddTaskSchema),
-    defaultValues,
-    shouldFocusError: false,
+  const { data: task, isLoading } = useQuery<IReturn<ITask>>({
+    queryKey: ['tasks', { id: id }],
+    queryFn: () => getSingleTask(id),
   });
 
+  const { data: users, isLoading: isUsersLoading } = useQuery<IReturn<IUser[]>>(
+    {
+      queryKey: ['users'],
+      queryFn: getUsers,
+    }
+  );
 
-  const { handleSubmit, reset, control, trigger, clearErrors, formState: {isSubmitted} } = methods;
 
-  const {date_end, date_start} = useWatch({control})
+  const methods = useForm<
+    IEditTaskSchemaInitialType,
+    unknown,
+    IEditTaskSchemaType
+  >({
+    resolver: zodResolver(EditTaskSchema),
+    values: {
+      name: task?.result?.name || '',
+      date_start: task?.result?.date_start ? new Date(task.result.date_start) :  null,
+      date_end: task?.result?.date_end ? new Date(task.result.date_end) :  null,
+      user: task?.result?.user._id || '',
+    },
+  });
 
+  const {
+    handleSubmit,
+    reset,
+    formState: { dirtyFields },
+  } = methods;
 
-  const { mutate: addTask, isPending } = useMutation({
-    mutationFn: (data: IAddTaskQuery) => addNewTask(data),
+  const { mutate: editTaskMutation, isPending } = useMutation({
+    mutationFn: (data: Partial<IAddTaskQuery>) => editTask(id, data),
     onError: (e) => {
       enqueueSnackbar(e.message || 'Ошибка запроса', {
         preventDuplicate: false,
@@ -55,8 +70,9 @@ export const AddTaskForm: FC<IAddTaskFormProps> = ({ formId, closeModal }) => {
       });
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks', { id: id }] });
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
-      enqueueSnackbar('Задача успешно создана!', {
+      enqueueSnackbar('Данные задачи успешно изменены!', {
         preventDuplicate: false,
         variant: 'success',
       });
@@ -65,37 +81,24 @@ export const AddTaskForm: FC<IAddTaskFormProps> = ({ formId, closeModal }) => {
     },
   });
 
-  const { data: users, isLoading } = useQuery<IReturn<IUser[]>>({
-    queryKey: ['users'],
-    queryFn: getUsers,
-  });
+  const onSubmit: SubmitHandler<IEditTaskSchemaType> = async (data) => {
+    const preparedData = getChangedFormFields(data, dirtyFields);
+    console.info(preparedData);
 
-  const onSubmit: SubmitHandler<IAddTaskSchemaType> = async (data) => {
-    console.info('Prepared Data', data);
-    addTask(data);
+    editTaskMutation(preparedData);
   };
-
-  useEffect(() => {
-    if (isSubmitted) {
-      if (dayjs(date_end) > dayjs(date_start)) {
-        clearErrors('date_end')
-      } else {
-        trigger('date_end')
-      }
-    }
-  }, [date_start, date_end, clearErrors, trigger, isSubmitted])
   return (
     <FormProvider {...methods}>
-      <form id={formId} onSubmit={handleSubmit(onSubmit)}>
+      <form id={id} onSubmit={handleSubmit(onSubmit)}>
         <Flex flexDirection="column" gap="5" position="relative">
           <InputField
-            isDisabled={isPending || isLoading}
+            isDisabled={isPending || isLoading || isUsersLoading}
             placeholder="Введите название задачи"
             label="Название задачи"
             name="name"
           />
           <DatePicker
-            disabled={isPending || isLoading}
+            disabled={isPending || isLoading || isUsersLoading}
             showTimeSelect
             timeFormat="HH:mm"
             timeIntervals={15}
@@ -105,7 +108,7 @@ export const AddTaskForm: FC<IAddTaskFormProps> = ({ formId, closeModal }) => {
             placeholderText="Введите дату начала"
           />
           <DatePicker
-            disabled={isPending || isLoading}
+            disabled={isPending || isLoading || isUsersLoading}
             showTimeSelect
             timeFormat="HH:mm"
             timeIntervals={15}
@@ -115,7 +118,7 @@ export const AddTaskForm: FC<IAddTaskFormProps> = ({ formId, closeModal }) => {
             placeholderText="Введите дату окончания"
           />
           <Select
-            isDisabled={isPending || isLoading}
+            isDisabled={isPending || isLoading || isUsersLoading}
             name="user"
             label="Ответственный"
             placeholder="Выберите ответственного"
@@ -126,7 +129,7 @@ export const AddTaskForm: FC<IAddTaskFormProps> = ({ formId, closeModal }) => {
               </option>
             ))}
           </Select>
-          {isPending || (isLoading && <Spinner />)}
+          {(isPending || isLoading || isUsersLoading) && <Spinner />}
         </Flex>
       </form>
     </FormProvider>

@@ -49,6 +49,7 @@ export const AddUserForm: FC<IAddUserFormProps> = ({ formId, closeModal }) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
       enqueueSnackbar('Пользователь успешно создан!', {
         preventDuplicate: false,
         variant: 'success',

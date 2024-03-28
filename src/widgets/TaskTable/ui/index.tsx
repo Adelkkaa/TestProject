@@ -22,7 +22,7 @@ import { FaEdit, FaTrash } from 'react-icons/fa';
 import { Modal } from '@/src/entities/modal';
 import { deleteTask, getTasks } from '@/src/entities/task';
 import { AddTaskForm } from '@/src/features/add-task-form';
-import { EditUserForm } from '@/src/features/edit-user-form';
+import { EditTaskForm } from '@/src/features/edit-task-form';
 import type { IReturn } from '@/src/shared';
 import {
   AnimatedCounter,
@@ -32,7 +32,13 @@ import {
 } from '@/src/shared';
 import type { ITask } from '@/src/shared/types';
 
-const columns = ['Название задачи', 'Дата начала', 'Дата окончания', 'Исполнитель', ''];
+const columns = [
+  'Название задачи',
+  'Дата начала',
+  'Дата окончания',
+  'Исполнитель',
+  '',
+];
 
 export const TaskTable = () => {
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
@@ -113,7 +119,9 @@ export const TaskTable = () => {
                 {tasks.result?.map((item) => (
                   <Tr key={item._id}>
                     <Th>{item.name}</Th>
-                    <Th>{dayjs(item.date_start).format('HH:mm (DD.MM.YYYY)')}</Th>
+                    <Th>
+                      {dayjs(item.date_start).format('HH:mm (DD.MM.YYYY)')}
+                    </Th>
                     <Th>{dayjs(item.date_end).format('HH:mm (DD.MM.YYYY)')}</Th>
                     <Th>{item.user.fullName}</Th>
                     <Th>
@@ -156,7 +164,7 @@ export const TaskTable = () => {
             formId={selectedTaskId}
           >
             {selectedTaskId && (
-              <EditUserForm
+              <EditTaskForm
                 closeModal={handleOnCloseModal}
                 id={selectedTaskId}
               />

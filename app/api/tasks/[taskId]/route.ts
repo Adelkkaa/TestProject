@@ -2,6 +2,7 @@ import { ObjectId } from 'mongodb';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
+
 import { clientPromise } from '@/src/shared/lib/clientPromise';
 import { getDbAndReqBody } from '@/src/shared/utils/api/dbConnection';
 
@@ -16,7 +17,7 @@ export async function GET(
     const isValidId = ObjectId.isValid(id);
 
     if (!isValidId) {
-      throw new Error('Wrong Task Id')
+      throw new Error('Wrong Task Id');
     }
 
     const result = await db
@@ -40,21 +41,28 @@ export async function PATCH(
 ) {
   try {
     const { db, reqBody } = await getDbAndReqBody(clientPromise, request);
-  const id = params.taskId;
+    const id = params.taskId;
 
-  const isValidId = ObjectId.isValid(id);
+    const isValidId = ObjectId.isValid(id);
 
-  if (!isValidId) {
-    throw new Error('Wrong Task Id')
-  }
+    if (!isValidId) {
+      throw new Error('Wrong Task Id');
+    }
 
-  const result = await db
-    .collection('tasks')
-    .updateOne({ _id: new ObjectId(id) }, { $set: reqBody });
+    let user = {};
 
-  return NextResponse.json({ result: result, error: null });
-  }
-  catch (error) {
+    if (reqBody.user) {
+      user = await db
+        .collection('users')
+        .findOne({ _id: new ObjectId(reqBody.user as string) }) as object;
+    }
+    console.info(user)
+    const result = await db
+      .collection('tasks')
+      .updateOne({ _id: new ObjectId(id) }, { $set: {...reqBody, user} });
+
+    return NextResponse.json({ result: result, error: null });
+  } catch (error) {
     return new Response(
       JSON.stringify({ result: null, error: (error as Error).message }),
       {
@@ -75,7 +83,7 @@ export async function DELETE(
     const isValidId = ObjectId.isValid(id);
 
     if (!isValidId) {
-      throw new Error('Wrong Task Id')
+      throw new Error('Wrong Task Id');
     }
 
     const result = await db

@@ -48,9 +48,24 @@ export async function PATCH(
       throw new Error('Wrong User Id');
     }
 
+    // Обновляем данные пользователя
     const result = await db
       .collection('users')
       .updateOne({ _id: new ObjectId(id) }, { $set: reqBody });
+
+    // Получаем все данные о текущем пользователе
+    const newUser = await db
+      .collection('users')
+      .findOne({ _id: new ObjectId(id) });
+
+
+    // Обновляем в задачах пользователя
+    await db
+      .collection('tasks')
+      .updateMany(
+        { 'user._id': new ObjectId(id) },
+        { $set: { user: newUser } }
+      );
 
     return NextResponse.json({ result: result, error: null });
   } catch (error) {
