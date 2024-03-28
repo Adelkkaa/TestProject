@@ -56,10 +56,10 @@ export async function PATCH(
         .collection('users')
         .findOne({ _id: new ObjectId(reqBody.user as string) }) as object;
     }
-    console.info(user)
+
     const result = await db
       .collection('tasks')
-      .updateOne({ _id: new ObjectId(id) }, { $set: {...reqBody, user} });
+      .updateOne({ _id: new ObjectId(id) }, { $set: Object.keys(user).length ? {...reqBody, user} : reqBody });
 
     return NextResponse.json({ result: result, error: null });
   } catch (error) {

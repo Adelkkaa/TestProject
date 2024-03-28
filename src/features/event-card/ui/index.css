@@ -1,0 +1,60 @@
+.rbc-header {
+    padding: 10px;
+  }
+  
+  .rbc-timeslot-group {
+    min-height: 120px !important;
+  }
+  
+  .rbc-addons-dnd-resize-ns-anchor  {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 8px;
+    overflow: hidden;
+    line-height: 8px;
+    font-size: 11px;
+    font-family: monospace;
+    text-align: center;
+    cursor: s-resize;
+  
+   }
+  
+  .rbc-row-content {
+    display: none;
+  }
+  
+  .rbc-allday-cell {
+    display: none;
+  }
+  
+  .rbc-event {
+    border: none !important;
+    background-color: transparent !important;
+    z-index: 2;
+    position: relative;
+  }
+  
+  .rbc-event-label {
+    display: none !important;
+  }
+  
+  .rbc-events-container {
+    width: 100% !important;
+  }
+  
+  .rbc-day-slot .rbc-time-slot:after {
+    border-top: none;
+  }
+  
+  .rbc-time-slot {
+    z-index: 1;
+  }
+  
+  .rbc-addons-dnd-resizable {
+    height: 100%;
+    width: 100%;
+  }
+  
+  

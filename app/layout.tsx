@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 
+import 'react-big-calendar/lib/css/react-big-calendar.css';
 import '@/src/shared/assets/styles/styles.scss';
+
 import { Providers } from '../src/app/layouts/TransitionLayout';
 
 export const metadata: Metadata = {
