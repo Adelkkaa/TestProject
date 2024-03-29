@@ -15,7 +15,7 @@
 }
 
 .rbc-today {
-  background-color: transparent;
+  background-color: rgba(0, 128, 0, .3) !important;
 }
 
 .rbc-time-column {
