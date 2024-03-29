@@ -51,7 +51,7 @@ export async function PATCH(
 
     let user = {};
 
-    if (reqBody.user) {
+    if (reqBody.user && typeof reqBody.user === 'string') {
       user = await db
         .collection('users')
         .findOne({ _id: new ObjectId(reqBody.user as string) }) as object;
@@ -61,7 +61,7 @@ export async function PATCH(
       .collection('tasks')
       .updateOne({ _id: new ObjectId(id) }, { $set: Object.keys(user).length ? {...reqBody, user} : reqBody });
 
-    return NextResponse.json({ result: result, error: null });
+    return NextResponse.json({ result: {id, ...result}, error: null });
   } catch (error) {
     return new Response(
       JSON.stringify({ result: null, error: (error as Error).message }),

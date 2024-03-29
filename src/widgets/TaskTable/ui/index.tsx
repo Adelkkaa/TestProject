@@ -158,7 +158,7 @@ export const TaskTable = () => {
           <Modal
             isOpen={!!selectedTaskId}
             onClose={handleOnCloseModal}
-            title="Изменение информации о пользователе"
+            title="Изменение информации о задаче"
             actionTitle="Сохранить"
             actionType="submit"
             formId={selectedTaskId}
