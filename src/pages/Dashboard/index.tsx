@@ -1,6 +1,11 @@
 'use client';
 
-import { Dashboard } from '@/src/widgets/Dashboard';
+
+import dynamic from 'next/dynamic';
+
+const Dashboard = dynamic(() => import('@/src/widgets/Dashboard'), {
+  ssr: false,
+});
 
 const DashboardPage = () => <Dashboard />;
 

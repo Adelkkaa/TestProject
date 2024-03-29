@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 
 import '@/src/shared/assets/styles/styles.scss';
+
 import { Providers } from '../src/app/layouts/TransitionLayout';
 
 export const metadata: Metadata = {

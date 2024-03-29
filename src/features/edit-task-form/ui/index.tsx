@@ -53,6 +53,7 @@ export const EditTaskForm: FC<IEditTaskForm> = ({ id, closeModal }) => {
       date_end: task?.result?.date_end ? new Date(task.result.date_end) :  null,
       user: task?.result?.user._id || '',
     },
+    shouldFocusError: false,
   });
 
   const {
