@@ -46,6 +46,7 @@ export const Header = () => {
         top: 0,
         backgroundColor: `${colorMode === 'dark' ? '#1A202C' : '#FFFFFF'}`,
         marginBottom: '32px',
+        zIndex: 1000
       }}
     >
       <Flex
