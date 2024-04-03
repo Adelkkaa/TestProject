@@ -1,1 +1,0 @@
-export {IconReact} from './IconReact'
