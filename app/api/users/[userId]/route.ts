@@ -96,6 +96,9 @@ export async function DELETE(
       .collection('users')
       .deleteOne({ _id: new ObjectId(id) });
 
+      // Удаление всех задач, связанных с пользователем
+    await db.collection('tasks').deleteMany({ "user._id": new ObjectId(id) });
+
     return NextResponse.json({ result: result, error: null });
   } catch (error) {
     return new Response(
@@ -106,3 +109,4 @@ export async function DELETE(
     );
   }
 }
+
