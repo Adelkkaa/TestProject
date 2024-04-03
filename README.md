@@ -1,6 +1,7 @@
 # TestProject
 
-[![pipeline status](https://github.com/Adelkkaa/TestProject/workflows/ci/badge.svg?branch=main)](https://github.com/Adelkkaa/TestProject/workflows/ci/badge.svg?branch=main)
+[![Build Status](https://github.com/Adelkkaa/TestProject/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/Adelkkaa/TestProject/actions/workflows/build.yml)
+
 
 
 
