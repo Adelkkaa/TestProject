@@ -1,3 +1,9 @@
+# TestProject
+
+[![pipeline status](https://github.com/Adelkkaa/TestProject/workflows/ci/badge.svg?branch=main)](https://github.com/Adelkkaa/TestProject/workflows/ci/badge.svg?branch=main)
+
+
+
 ### Технологический стек
 [![](src/shared/assets/icons//ts.svg)](https://www.typescriptlang.org/)
 [![](src/shared/assets/icons//next.svg)](https://nextjs.org/)
