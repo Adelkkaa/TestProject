@@ -15,4 +15,12 @@ export const headerLinks = [
         name: 'Доска', 
         href: '/dashboard'
     },
+    {
+        name: 'Логин', 
+        href: '/login'
+    },
+    {
+        name: 'Регистрация', 
+        href: '/registration'
+    },
 ]

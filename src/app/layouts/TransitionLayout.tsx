@@ -47,6 +47,8 @@ export const Providers: FC<PropsWithChildren> = ({ children }) => {
                     exit="exit"
                     variants={initialAnimation}
                     flexGrow={1}
+                    display={'flex'}
+                    flexDirection={'column'}
                   >
                     {children}
                   </MotionBox>

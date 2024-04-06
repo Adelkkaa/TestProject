@@ -2,10 +2,11 @@
 import { Flex } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 import { enqueueSnackbar } from 'notistack';
-import type { FC } from 'react';
+import { useEffect, type FC } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm, useWatch } from 'react-hook-form';
 
 import { editTask, getSingleTask } from '@/src/entities/task';
 import { getUsers } from '@/src/entities/user';
@@ -59,8 +60,14 @@ export const EditTaskForm: FC<IEditTaskForm> = ({ id, closeModal }) => {
   const {
     handleSubmit,
     reset,
-    formState: { dirtyFields },
+    control,
+    trigger,
+    clearErrors,
+    formState: { dirtyFields, isSubmitted },
   } = methods;
+
+  const { date_end, date_start } = useWatch({ control });
+
 
   const { mutate: editTaskMutation, isPending } = useMutation({
     mutationFn: (data: Partial<IAddTaskQuery>) => editTask(id, data),
@@ -81,6 +88,16 @@ export const EditTaskForm: FC<IEditTaskForm> = ({ id, closeModal }) => {
       closeModal();
     },
   });
+
+  useEffect(() => {
+    if (isSubmitted) {
+      if (dayjs(date_end) > dayjs(date_start)) {
+        clearErrors('date_end');
+      } else {
+        trigger('date_end');
+      }
+    }
+  }, [date_start, date_end, clearErrors, trigger, isSubmitted]);
 
   const onSubmit: SubmitHandler<IEditTaskSchemaType> = async (data) => {
     const preparedData = getChangedFormFields(data, dirtyFields);
