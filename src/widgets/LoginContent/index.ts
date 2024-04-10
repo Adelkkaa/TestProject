@@ -1,0 +1,1 @@
+export { LoginContent as default } from './ui/LoginContent'

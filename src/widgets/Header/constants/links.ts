@@ -1,18 +1,25 @@
 export const headerLinks = [
     {
         name: 'Домой', 
-        href: '/'
+        href: '/',
+        access: 'public'
     },
     {
         name: 'Пользователи', 
-        href: '/users'
+        href: '/users',
+        access: 'private'
+
     },
     {
         name: 'Задачи', 
-        href: '/tasks'
+        href: '/tasks',
+        access: 'private'
+
     },
     {
         name: 'Доска', 
-        href: '/dashboard'
+        href: '/dashboard',
+        access: 'private'
+
     },
 ]

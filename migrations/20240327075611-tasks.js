@@ -8,8 +8,9 @@ module.exports = {
       user: user,
       name: 'Пример задачи',
       date_start: new Date(),
-      date_end: new Date().setDate(new Date().getDate() + 7), // Задача на 7 дней вперед
+      date_end: new Date(new Date().setHours(new Date().getHours() + 2)), // Задача на 2 часа вперед
     }));
+
 
     // Вставляем задачи в коллекцию tasks
     return db.collection('tasks').insertMany(tasks);

@@ -13,6 +13,7 @@ export {
   PhoneInput,
   Select,
   Spinner,
+  PasswordField
 } from './ui';
 
 export { baseApi } from './api/apiInstance';

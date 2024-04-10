@@ -40,11 +40,16 @@ export const AddTaskForm: FC<IAddTaskFormProps> = ({ formId, closeModal }) => {
     shouldFocusError: false,
   });
 
+  const {
+    handleSubmit,
+    reset,
+    control,
+    trigger,
+    clearErrors,
+    formState: { isSubmitted },
+  } = methods;
 
-  const { handleSubmit, reset, control, trigger, clearErrors, formState: {isSubmitted} } = methods;
-
-  const {date_end, date_start} = useWatch({control})
-
+  const { date_end, date_start } = useWatch({ control });
 
   const { mutate: addTask, isPending } = useMutation({
     mutationFn: (data: IAddTaskQuery) => addNewTask(data),
@@ -78,12 +83,12 @@ export const AddTaskForm: FC<IAddTaskFormProps> = ({ formId, closeModal }) => {
   useEffect(() => {
     if (isSubmitted) {
       if (dayjs(date_end) > dayjs(date_start)) {
-        clearErrors('date_end')
+        clearErrors('date_end');
       } else {
-        trigger('date_end')
+        trigger('date_end');
       }
     }
-  }, [date_start, date_end, clearErrors, trigger, isSubmitted])
+  }, [date_start, date_end, clearErrors, trigger, isSubmitted]);
   return (
     <FormProvider {...methods}>
       <form id={formId} onSubmit={handleSubmit(onSubmit)}>

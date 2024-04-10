@@ -34,4 +34,16 @@ export type IIconProps = {
   height?: string;
 };
 
+export type ILogin = {
+  email: string;
+  password: string;
+}
+
+export type IAuthProfile = {
+  id: string;
+  username: string;
+  email: string;
+  role: string;
+}
+
 export type IBreakPoints = 'base' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';

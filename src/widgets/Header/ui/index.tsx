@@ -1,6 +1,7 @@
 import { Link } from '@chakra-ui/next-js';
 import {
   Box,
+  Button,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -9,19 +10,29 @@ import {
   DrawerOverlay,
   Flex,
   IconButton,
+  Text,
   useColorMode,
   useDisclosure,
 } from '@chakra-ui/react';
+import { useMutation } from '@tanstack/react-query';
+import type { AxiosError } from 'axios';
 import { motion } from 'framer-motion';
+import { enqueueSnackbar } from 'notistack';
+import { useContext } from 'react';
 import { CiMenuBurger } from 'react-icons/ci';
-import { FaMoon, FaSun } from 'react-icons/fa';
+import { FaDoorClosed, FaMoon, FaSun } from 'react-icons/fa';
 
+import { AuthContext } from '@/src/app/context/AuthContext';
+import { signOut } from '@/src/entities/auth';
 import { MotionText, initialAnimation } from '@/src/shared';
+import type { IAuthProfile, IReturn } from '@/src/shared/types';
 
 import { headerLinks } from '../constants/links';
 
 export const Header = () => {
   const { toggleColorMode, colorMode } = useColorMode();
+
+  const { profile, setProfile } = useContext(AuthContext);
 
   const title = 'My Test'.toUpperCase().split('');
 
@@ -32,8 +43,26 @@ export const Header = () => {
   };
 
   const handleClose = () => {
-    onClose()
-  }
+    onClose();
+  };
+
+  const { mutate: signOutMutation, isPending } = useMutation({
+    mutationFn: (data: IAuthProfile) => signOut(data),
+    onError: (e: AxiosError<IReturn<null>>) => {
+      console.info(e);
+      enqueueSnackbar(e?.response?.data?.error || 'Ошибка запроса', {
+        preventDuplicate: false,
+        variant: 'error',
+      });
+    },
+    onSuccess: () => {
+      enqueueSnackbar('Вы успешно вышли', {
+        preventDuplicate: false,
+        variant: 'success',
+      });
+      setProfile(null);
+    },
+  });
 
   return (
     <motion.header
@@ -46,7 +75,7 @@ export const Header = () => {
         top: 0,
         backgroundColor: `${colorMode === 'dark' ? '#1A202C' : '#FFFFFF'}`,
         marginBottom: '32px',
-        zIndex: 1000
+        zIndex: 1000,
       }}
     >
       <Flex
@@ -75,11 +104,25 @@ export const Header = () => {
                   h={'100%'}
                 >
                   <Flex mt={10} gap={6} fontSize={24} direction="column">
-                    {headerLinks.map((item) => (
-                      <Link key={item.href} textUnderlineOffset="10px" onClick={handleClose} href={item.href}>
-                        {item.name}
-                      </Link>
-                    ))}
+                    {headerLinks.map((item) => {
+                      if (
+                        ((profile?.role === 'Admin' ||
+                          profile?.role === 'Employee') &&
+                          item.access === 'private') ||
+                        item.access === 'public'
+                      ) {
+                        return (
+                          <Link
+                            key={item.href}
+                            textUnderlineOffset="10px"
+                            onClick={handleClose}
+                            href={item.href}
+                          >
+                            {item.name}
+                          </Link>
+                        );
+                      }
+                    })}
                   </Flex>
                   <Flex justifyContent={'flex-end'}>
                     <IconButton
@@ -96,7 +139,7 @@ export const Header = () => {
             </DrawerContent>
           </Drawer>
           <Box>
-            <Link href='/' userSelect='none'>
+            <Link href="/" userSelect="none">
               {title.map((titleLetter, index) => (
                 <MotionText
                   fontSize={24}
@@ -115,6 +158,26 @@ export const Header = () => {
             </Link>
           </Box>
         </Flex>
+        {profile ? (
+          <Flex alignItems="center" gap="16px">
+            <Text>{profile.username}</Text>
+            <Button
+              isLoading={isPending}
+              onClick={() => signOutMutation(profile)}
+            >
+              Выйти
+            </Button>
+          </Flex>
+        ) : (
+          <Link
+            sx={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+            _hover={{ textDecoration: 'none' }}
+            href="/login"
+          >
+            <Text>Войти</Text>
+            <FaDoorClosed />
+          </Link>
+        )}
       </Flex>
     </motion.header>
   );

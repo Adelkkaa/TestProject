@@ -19,6 +19,7 @@ export const Footer = () => {
         <Box>
           {title.map((titleLetter, index) => (
             <MotionText
+              userSelect='none'
               fontSize={24}
               key={index}
               display={'inline'}
