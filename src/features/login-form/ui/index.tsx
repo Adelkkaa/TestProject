@@ -1,12 +1,20 @@
+'use client'
 import { Link } from '@chakra-ui/next-js';
 import { Button, Flex, Text, useColorMode } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import type { AxiosError } from 'axios';
+import { useRouter } from 'next/navigation';
+import { enqueueSnackbar } from 'notistack';
+import { useContext, useState } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
-import { PasswordField } from '@/src/shared';
+import { AuthContext } from '@/src/app/context/AuthContext';
+import { login } from '@/src/entities/auth';
+import { PasswordField, Spinner } from '@/src/shared';
+import type { IAuthProfile, ILogin, IReturn } from '@/src/shared/types';
 import { InputField } from '@/src/shared/ui/Input';
 
 import { defaultValues } from '../model/defaultValues';
@@ -17,6 +25,8 @@ import type {
 import { LoginSchema } from '../model/LoginForm.schema';
 
 export const LoginForm = () => {
+  const router = useRouter();
+  const { setProfile } = useContext(AuthContext);
   const { colorMode } = useColorMode();
   const boxShadow =
     colorMode === 'light'
@@ -25,7 +35,25 @@ export const LoginForm = () => {
 
   const [showPassword, setShowPassword] = useState(false);
 
-  // const queryClient = useQueryClient();
+  const { mutate: loginMutation, isPending } = useMutation({
+    mutationFn: (data: ILogin) => login(data),
+    onError: (e: AxiosError<IReturn<null>>) => {
+      console.info(e);
+      enqueueSnackbar(e?.response?.data?.error || 'Ошибка запроса', {
+        preventDuplicate: false,
+        variant: 'error',
+      });
+    },
+    onSuccess: (data: IReturn<IAuthProfile>) => {
+      enqueueSnackbar('Вы успешно авторизованы', {
+        preventDuplicate: false,
+        variant: 'success',
+      });
+      setProfile(data.result);
+      router.push('/');
+
+    },
+  });
 
   const methods = useForm<ILoginSchemaInitialType, unknown, ILoginSchemaType>({
     mode: 'onSubmit',
@@ -34,13 +62,10 @@ export const LoginForm = () => {
     shouldFocusError: false,
   });
 
-  const {
-    handleSubmit,
-    // formState: {},
-  } = methods;
+  const { handleSubmit } = methods;
 
   const onSubmit: SubmitHandler<ILoginSchemaType> = async (data) => {
-    console.info('Prepared Data', data);
+    loginMutation(data);
   };
 
   const onClickShowPassword = () => {
@@ -67,8 +92,9 @@ export const LoginForm = () => {
           borderRadius="20px"
         >
           <Text alignSelf="center">Форма авторизации</Text>
-          <InputField name="email" label="Email" />
+          <InputField isDisabled={isPending} name="email" label="Email" />
           <PasswordField
+            isDisabled={isPending}
             type={showPassword ? 'text' : 'password'}
             name="password"
             label="Пароль"
@@ -79,6 +105,7 @@ export const LoginForm = () => {
             <Link href="/registration">Перейти к регистрации</Link>
             <Button type="submit">Войти</Button>
           </Flex>
+          {isPending && <Spinner />}
         </Flex>
       </form>
     </FormProvider>

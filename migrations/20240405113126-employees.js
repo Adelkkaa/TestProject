@@ -10,6 +10,7 @@ module.exports = {
         username: 'Админ',
         role: 'Admin',
         email: 'snakeadel00@gmail.com',
+        refreshToken: null,
         password
       },
     ]);
