@@ -37,13 +37,21 @@ export type IIconProps = {
 export type ILogin = {
   email: string;
   password: string;
-}
+};
+
+export type IRegistration = {
+  email: string;
+  password: string;
+  username: string;
+};
 
 export type IAuthProfile = {
   id: string;
   username: string;
   email: string;
   role: string;
-}
+};
+
+export type IJWTBody = IAuthProfile & { iat: number; exp: number };
 
 export type IBreakPoints = 'base' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';

@@ -17,6 +17,7 @@ import {
 import { useMutation } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 import { motion } from 'framer-motion';
+import { usePathname, useRouter } from 'next/navigation';
 import { enqueueSnackbar } from 'notistack';
 import { useContext } from 'react';
 import { CiMenuBurger } from 'react-icons/ci';
@@ -31,6 +32,9 @@ import { headerLinks } from '../constants/links';
 
 export const Header = () => {
   const { toggleColorMode, colorMode } = useColorMode();
+
+  const pathname = usePathname();
+  const router = useRouter();
 
   const { profile, setProfile } = useContext(AuthContext);
 
@@ -64,6 +68,10 @@ export const Header = () => {
     },
   });
 
+  const onSignOutClick = async (profile: IAuthProfile) => {
+    await signOutMutation(profile);
+    router.push('/');
+  };
   return (
     <motion.header
       initial="initial"
@@ -114,6 +122,9 @@ export const Header = () => {
                         return (
                           <Link
                             key={item.href}
+                            textDecoration={
+                              item.href === pathname ? 'underline' : 'none'
+                            }
                             textUnderlineOffset="10px"
                             onClick={handleClose}
                             href={item.href}
@@ -163,7 +174,7 @@ export const Header = () => {
             <Text>{profile.username}</Text>
             <Button
               isLoading={isPending}
-              onClick={() => signOutMutation(profile)}
+              onClick={() => onSignOutClick(profile)}
             >
               Выйти
             </Button>

@@ -30,16 +30,20 @@ export async function POST(request: NextRequest) {
         role: employee.role,
       });
 
-      const response = NextResponse.json({ result: {
-        id: employee._id,
-        username: employee.username,
-        email: employee.email,
-        role: employee.role,
-      }, error: null });
+      const response = NextResponse.json({
+        result: {
+          id: employee._id,
+          username: employee.username,
+          email: employee.email,
+          role: employee.role,
+        },
+        error: null,
+      });
 
       response.cookies.set('accessToken', accessToken, {
         path: '/',
         httpOnly: true,
+        secure: true,
         sameSite: 'strict',
         maxAge: 60 * 30, // 30 минут
       });
@@ -47,13 +51,17 @@ export async function POST(request: NextRequest) {
       response.cookies.set('refreshToken', refreshToken, {
         path: '/',
         httpOnly: true,
+        secure: true,
         sameSite: 'strict',
         maxAge: 60 * 60 * 24 * 30, // 30 дней
       });
 
       await db
-      .collection('employees')
-      .updateOne({ email: reqBody.email }, { $set: {refreshToken: refreshToken} });
+        .collection('employees')
+        .updateOne(
+          { email: reqBody.email },
+          { $set: { refreshToken: refreshToken } }
+        );
 
       return response;
     } else {

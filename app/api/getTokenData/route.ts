@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
     if (token) {
       const tokenData = jwt.verify(
         token,
-        process.env.NEXT_PUBLIC_JWT_ACCESS_SECRET as string
+        process.env.NEXT_PUBLIC_JWT_REFRESH_SECRET as string
       );
       return NextResponse.json({ result: tokenData, error: null });
     } else {
