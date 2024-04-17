@@ -13,7 +13,7 @@ import {
 } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 import { AnimatePresence } from 'framer-motion';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { SnackbarProvider, enqueueSnackbar } from 'notistack';
 import {
   useCallback,
@@ -23,6 +23,7 @@ import {
   type PropsWithChildren,
 } from 'react';
 
+import { refreshAccessToken } from '@/src/entities/auth';
 import { MotionBox, baseApi, initialAnimation } from '@/src/shared';
 import type { IAuthProfile, IReturn } from '@/src/shared/types';
 import { Footer, Header } from '@/src/widgets';
@@ -34,6 +35,8 @@ export const Providers: FC<PropsWithChildren> = ({ children }) => {
   const queryClient = new QueryClient();
 
   const [profile, setProfile] = useState<IAuthProfile | null>(null);
+
+  const router = useRouter();
 
   const initialProfile = useCallback(async () => {
     try {
@@ -55,7 +58,29 @@ export const Providers: FC<PropsWithChildren> = ({ children }) => {
 
   useEffect(() => {
     initialProfile();
-  }, [initialProfile]);
+    baseApi.interceptors.response.use(
+      (config) => config,
+      async (error) => {
+        const originalRequest = error.config;
+        if (
+          error.response.status === 401 &&
+          error.config &&
+          !error.config._isRetry
+        ) {
+          originalRequest._isRetry = true;
+          try {
+            await refreshAccessToken();
+            return baseApi.request(originalRequest);
+          } catch (e) {
+            setProfile(null);
+            router.push('/')
+          }
+        }
+        throw error;
+      }
+    );
+    console.info('rerender');
+  }, [initialProfile, router]);
 
   const pathname = usePathname();
 

@@ -1,12 +1,18 @@
 import { Link } from '@chakra-ui/next-js';
 import { Button, Flex, Text, useColorMode } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import type { AxiosError } from 'axios';
+import { useRouter } from 'next/navigation';
+import { enqueueSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
-import { PasswordField } from '@/src/shared';
+import { registration } from '@/src/entities/auth';
+import { PasswordField, Spinner } from '@/src/shared';
+import type { IRegistration, IReturn } from '@/src/shared/types';
 import { InputField } from '@/src/shared/ui/Input';
 
 import { defaultValues } from '../model/defaultValues';
@@ -15,7 +21,6 @@ import type {
   IRegistrationSchemaType,
 } from '../model/RegistrationForm.schema';
 import { RegistrationSchema } from '../model/RegistrationForm.schema';
-
 
 export const RegistrationForm = () => {
   const { colorMode } = useColorMode();
@@ -27,7 +32,25 @@ export const RegistrationForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordRepeat, setShowPasswordRepeat] = useState(false);
 
-  // const queryClient = useQueryClient();
+  const router = useRouter();
+
+  const { mutate: registrationMutation, isPending } = useMutation({
+    mutationFn: (data: IRegistration) => registration(data),
+    onError: (e: AxiosError<IReturn<null>>) => {
+      console.info(e);
+      enqueueSnackbar(e?.response?.data?.error || 'Ошибка запроса', {
+        preventDuplicate: false,
+        variant: 'error',
+      });
+    },
+    onSuccess: () => {
+      enqueueSnackbar('Вы успешно зарегестрированы', {
+        preventDuplicate: false,
+        variant: 'success',
+      });
+      router.push('/login');
+    },
+  });
 
   const methods = useForm<
     IRegistrationSchemaInitialType,
@@ -45,12 +68,11 @@ export const RegistrationForm = () => {
     control,
     trigger,
     clearErrors,
-    formState: {isSubmitted},
+    formState: { isSubmitted },
   } = methods;
 
   const { password, passwordRepeat } = useWatch({ control });
 
-  
   useEffect(() => {
     if (isSubmitted && passwordRepeat) {
       if (password === passwordRepeat) {
@@ -62,7 +84,9 @@ export const RegistrationForm = () => {
   }, [password, passwordRepeat, clearErrors, trigger, isSubmitted]);
 
   const onSubmit: SubmitHandler<IRegistrationSchemaType> = async (data) => {
-    console.info('Prepared Data', data);
+    const { password, email, username } = data;
+    console.info('Prepared Data', { password, email, username });
+    registrationMutation({ password, email, username });
   };
 
   const onClickShowPassword = (isRepeatPassword: boolean) =>
@@ -91,9 +115,14 @@ export const RegistrationForm = () => {
           borderRadius="20px"
         >
           <Text alignSelf="center">Форма регистрации</Text>
-          <InputField name="username" label="Имя пользователя" />
-          <InputField name="email" label="Email" />
+          <InputField
+            isDisabled={isPending}
+            name="username"
+            label="Имя пользователя"
+          />
+          <InputField isDisabled={isPending} name="email" label="Email" />
           <PasswordField
+            isDisabled={isPending}
             type={showPassword ? 'text' : 'password'}
             name="password"
             label="Пароль"
@@ -101,6 +130,7 @@ export const RegistrationForm = () => {
             onEyeClick={() => onClickShowPassword(false)}
           />
           <PasswordField
+            isDisabled={isPending}
             type={showPasswordRepeat ? 'text' : 'password'}
             name="passwordRepeat"
             label="Повторите пароль"
@@ -108,9 +138,12 @@ export const RegistrationForm = () => {
             onEyeClick={() => onClickShowPassword(true)}
           />
           <Flex w="100%" justifyContent="space-between">
-            <Link href='/login'>Перейти к авторизации</Link>
-            <Button type="submit">Регистрация</Button>
+            <Link href="/login">Перейти к авторизации</Link>
+            <Button isDisabled={isPending} type="submit">
+              Регистрация
+            </Button>
           </Flex>
+          {isPending && <Spinner />}
         </Flex>
       </form>
     </FormProvider>

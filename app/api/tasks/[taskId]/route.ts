@@ -11,6 +11,14 @@ export async function GET(
   { params }: { params: { taskId: string } }
 ) {
   try {
+    const accessToken = request.cookies.get('accessToken')?.value;
+
+    if (!accessToken) {
+      return NextResponse.json(
+        { result: null, error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
     const { db } = await getDbAndReqBody(clientPromise, null);
     const id = params.taskId;
 
@@ -39,7 +47,16 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: { taskId: string } }
 ) {
+  
   try {
+    const accessToken = request.cookies.get('accessToken')?.value;
+
+    if (!accessToken) {
+      return NextResponse.json(
+        { result: null, error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
     const { db, reqBody } = await getDbAndReqBody(clientPromise, request);
     const id = params.taskId;
 
@@ -77,6 +94,14 @@ export async function DELETE(
   { params }: { params: { taskId: string } }
 ) {
   try {
+    const accessToken = request.cookies.get('accessToken')?.value;
+
+    if (!accessToken) {
+      return NextResponse.json(
+        { result: null, error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
     const { db } = await getDbAndReqBody(clientPromise, null);
     const id = params.taskId;
 
